@@ -1,65 +1,69 @@
-import Image from "next/image";
+"use client";
 
+import { useState } from "react";
+import { Picture, pickMixedPictures } from "@/lib/pictures";
+import StartScreen, { PictureCount, ColorMode } from "@/components/StartScreen";
+import GameScreen from "@/components/GameScreen";
+import EndScreen from "@/components/EndScreen";
+
+type ScreenState = "start" | "game" | "end";
+
+const TOTAL_ROUNDS = 5;
+
+// 게임의 가장 바깥쪽(최상위) 컴포넌트
+// 어떤 화면을 보여줄지(시작/게임/끝)와 옵션(그림 개수, 색상)을 관리합니다.
 export default function Home() {
+  const [screen, setScreen] = useState<ScreenState>("start");
+  const [currentRound, setCurrentRound] = useState(1);
+  const [roundPictures, setRoundPictures] = useState<Picture[]>([]);
+
+  // 시작 화면에서 고른 옵션값들 (게임 도중에는 바뀌지 않습니다)
+  const [pictureCount, setPictureCount] = useState<PictureCount>(3);
+  const [colorMode, setColorMode] = useState<ColorMode>("color");
+
+  const handleStartGame = () => {
+    setCurrentRound(1);
+    setRoundPictures(pickMixedPictures(pictureCount));
+    setScreen("game");
+  };
+
+  const handleNextRound = () => {
+    if (currentRound >= TOTAL_ROUNDS) {
+      setScreen("end");
+    } else {
+      setCurrentRound((prev) => prev + 1);
+      setRoundPictures(pickMixedPictures(pictureCount));
+    }
+  };
+
+  const handleGoHome = () => {
+    setScreen("start");
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="w-full h-full min-h-screen">
+      {screen === "start" && (
+        <StartScreen
+          pictureCount={pictureCount}
+          onChangePictureCount={setPictureCount}
+          colorMode={colorMode}
+          onChangeColorMode={setColorMode}
+          onStart={handleStartGame}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      )}
+      {screen === "game" && (
+        <GameScreen
+          currentRound={currentRound}
+          totalRounds={TOTAL_ROUNDS}
+          pictures={roundPictures}
+          colorMode={colorMode}
+          onNextRound={handleNextRound}
+          onGoHome={handleGoHome}
+        />
+      )}
+      {screen === "end" && (
+        <EndScreen onRestart={handleStartGame} onGoHome={handleGoHome} />
+      )}
+    </main>
   );
 }
