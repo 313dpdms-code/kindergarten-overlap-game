@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 겹친 그림 맞추기
 
-## Getting Started
+어린이집 선생님이 아이들과 함께 즐길 수 있는 **그림 맞추기 교육용 게임**입니다.
+화면에 여러 그림이 겹쳐서 반투명하게 나타나면, 아이들이 무엇이 숨어있는지 맞히는 단순하지만 재미있는 게임이에요.
 
-First, run the development server:
+## ✨ 주요 기능
+
+- 🎯 **5개 카테고리**에서 그림이 골고루 섞여 등장 (동물, 과일, 탈것, 음식, 자연 — 총 46종)
+- 🔢 **그림 개수 선택**: 3장 / 5장 (난이도 조절)
+- 🎨 **색상 모드 선택**: 컬러 / 흑백 실루엣 (난이도 조절)
+- 🎬 **부드러운 애니메이션**: framer-motion으로 그림 등장/공개 효과
+- 👶 **어린이 친화 UI**: 큰 버튼, 둥근 폰트(Jua), 알록달록 색상
+- 👩‍🏫 **선생님 친화 조작**: 화면에 버튼 3개만 (정답 공개 / 다음 문제 / 처음으로)
+
+## 🚀 게임 실행하기
+
+### 처음 한 번만 — 컴퓨터 준비
+컴퓨터에 [Node.js](https://nodejs.org) (LTS 버전) 가 설치되어 있어야 해요.
+
+### 게임 켜기
 
 ```bash
+# 게임 폴더로 이동
+cd ~/Desktop/overlap-game
+
+# 게임 실행 (서버가 켜짐)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 [http://localhost:3000](http://localhost:3000) 을 열면 게임 화면이 나옵니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 게임 끄기
+터미널 창에서 `Ctrl + C` 를 누르면 서버가 꺼져요.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📖 자세한 사용 설명서
 
-## Learn More
+비개발자도 따라할 수 있는 상세 가이드는 [`엄마_사용설명서.md`](./엄마_사용설명서.md) 를 참고하세요.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ 사용한 기술
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js 16** (App Router, Turbopack)
+- **TypeScript** (타입 안전성)
+- **Tailwind CSS v4** (스타일링)
+- **framer-motion** (애니메이션)
+- **Twemoji** (트위터 무료 공개 일러스트, CDN으로 불러옴)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 폴더 구조
 
-## Deploy on Vercel
+```
+overlap-game/
+├─ app/
+│  ├─ page.tsx          # 메인 페이지 (화면 전환 관리)
+│  ├─ layout.tsx        # 폰트, 전역 설정
+│  └─ globals.css       # 전역 스타일
+├─ components/
+│  ├─ StartScreen.tsx   # 시작 화면 (옵션 선택)
+│  ├─ GameScreen.tsx    # 게임 화면 (그림 표시, 정답 공개)
+│  └─ EndScreen.tsx     # 종료 화면 (축하 + 다시하기)
+├─ lib/
+│  └─ pictures.ts       # 그림 데이터 + 라운드 그림 뽑기 함수
+└─ 엄마_사용설명서.md    # 어린이집 선생님용 사용 가이드
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 라이선스
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+개인/교육 용도로 자유롭게 사용 가능합니다.
