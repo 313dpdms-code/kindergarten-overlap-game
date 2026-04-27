@@ -23,21 +23,26 @@ type PlacedPicture = Picture & {
 
 // 그림의 개수에 따라 화면에 겹쳐 놓을 위치를 계산해 주는 함수
 // 가운데(0,0)를 기준으로 부드러운 원/타원 형태로 그림들을 배치합니다.
-function computeLayout(count: number): { x: number; y: number; r: number }[] {
+// scale 인자(0~1)는 화면 크기에 따라 그림 사이 간격을 줄여주는 비율입니다.
+// (모바일에서는 그림이 작으니 간격도 작아야 잘 겹쳐 보여요)
+function computeLayout(
+  count: number,
+  scale: number,
+): { x: number; y: number; r: number }[] {
   if (count === 3) {
     return [
-      { x: -100, y: -30, r: -8 },
-      { x: 100, y: -30, r: 8 },
-      { x: 0, y: 70, r: -3 },
+      { x: -100 * scale, y: -30 * scale, r: -8 },
+      { x: 100 * scale, y: -30 * scale, r: 8 },
+      { x: 0, y: 70 * scale, r: -3 },
     ];
   }
   // 5장: 중앙 1개 + 둘레 4개를 십자가/마름모 모양으로 배치
   return [
     { x: 0, y: 0, r: 0 },
-    { x: -130, y: -50, r: -10 },
-    { x: 130, y: -50, r: 10 },
-    { x: -90, y: 80, r: 6 },
-    { x: 90, y: 80, r: -6 },
+    { x: -130 * scale, y: -50 * scale, r: -10 },
+    { x: 130 * scale, y: -50 * scale, r: 10 },
+    { x: -90 * scale, y: 80 * scale, r: 6 },
+    { x: 90 * scale, y: 80 * scale, r: -6 },
   ];
 }
 
@@ -55,10 +60,26 @@ export default function GameScreen({
   const [placedPictures, setPlacedPictures] = useState<PlacedPicture[]>([]);
   // 정답이 한 번에 모두 공개되었는지 여부 (true면 펼쳐진 화면이 보임)
   const [revealed, setRevealed] = useState(false);
+  // 화면 너비에 따라 그림 사이 간격을 결정하는 비율 (모바일=0.55, PC=1)
+  // 처음에는 1로 두고, 브라우저에서 실제 화면을 본 뒤에 모바일이면 0.55로 바꿉니다
+  const [layoutScale, setLayoutScale] = useState(1);
 
-  // 라운드가 바뀌면 그림에 위치 정보를 붙이고 공개 상태를 초기화합니다
+  // 화면 크기를 보고 모바일 여부를 판단합니다.
+  // 768px 미만이면 모바일로 간주하고, 그림 간격을 약 55%로 줄여서 더 잘 겹치게 합니다.
+  // 화면을 회전하거나 창 크기를 바꿀 때도 자동으로 다시 계산되도록 resize 이벤트도 등록합니다.
   useEffect(() => {
-    const layout = computeLayout(pictures.length);
+    const updateScale = () => {
+      const isMobile = window.innerWidth < 768;
+      setLayoutScale(isMobile ? 0.55 : 1);
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
+  // 라운드가 바뀌거나 화면 크기가 바뀌면 그림 위치를 다시 계산합니다
+  useEffect(() => {
+    const layout = computeLayout(pictures.length, layoutScale);
     const arranged: PlacedPicture[] = pictures.map((pic, index) => ({
       ...pic,
       xOffset: layout[index].x,
@@ -67,7 +88,7 @@ export default function GameScreen({
     }));
     setPlacedPictures(arranged);
     setRevealed(false);
-  }, [pictures]);
+  }, [pictures, layoutScale]);
 
   const handleReveal = () => {
     setRevealed(true);
