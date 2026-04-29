@@ -79,8 +79,9 @@ export const PICTURE_GROUPS = [
 
 // 한 라운드의 그림을 뽑는 함수
 // count=3이면 5개 카테고리 중 3개를 무작위로 골라 1장씩,
+// count=4이면 5개 카테고리 중 4개를 무작위로 골라 1장씩,
 // count=5이면 5개 카테고리 모두에서 1장씩 뽑아 섞어 반환합니다.
-export function pickMixedPictures(count: 3 | 5): Picture[] {
+export function pickMixedPictures(count: 3 | 4 | 5): Picture[] {
   const pickOne = (arr: Picture[]) =>
     arr[Math.floor(Math.random() * arr.length)];
 

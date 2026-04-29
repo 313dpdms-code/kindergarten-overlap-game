@@ -2,7 +2,7 @@
 
 import { PICTURE_GROUPS } from "@/lib/pictures";
 
-export type PictureCount = 3 | 5;
+export type PictureCount = 3 | 4 | 5;
 export type ColorMode = "color" | "blackwhite";
 
 type Props = {
@@ -65,7 +65,7 @@ export default function StartScreen({
         <div className="bg-white/80 rounded-3xl px-6 py-4 shadow-md">
           <p className="text-base text-slate-500 mb-2">그림 개수</p>
           <div className="flex gap-2">
-            {([3, 5] as const).map((count) => (
+            {([3, 4, 5] as const).map((count) => (
               <button
                 key={count}
                 onClick={() => onChangePictureCount(count)}
